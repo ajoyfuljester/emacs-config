@@ -39,6 +39,7 @@
 
 
 
+(setq-default tab-width 4)
 (setq tab-always-indent nil)
 
 (setq backup-directory-alist `(("." . "~/.cache/emacs/backup")))
@@ -50,7 +51,8 @@
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
 			 ("org" . "https://orgmode.org/elpa/")
-			 ("elpa" . "https://elpa.gnu.org/packages/")))
+			 ("elpa" . "https://elpa.gnu.org/packages/")
+			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
 (package-initialize)
 (unless package-archive-contents
@@ -67,18 +69,24 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+(use-package compile
+  :config
+  (define-key compilation-mode-map (kbd "C-c C-e") #'compile-goto-error)
+  (define-key compilation-mode-map (kbd "C-c C-c") #'compile)
+  (define-key compilation-mode-map (kbd "C-c C-r") #'recompile)
+  )
 
 (use-package ivy
   :config
   (ivy-mode))
-(use-package counsel
-  :after ivy
-  :config
-  (counsel-mode))
+; (use-package counsel
+  ; :after ivy
+  ; :config
+  ; (counsel-mode))
 
 (use-package which-key
   :init
-  (setq which-key-idle-delay 0.2)
+  (setq which-key-idle-delay 0.3)
   :config
   (which-key-mode))
 
@@ -88,11 +96,14 @@
   (setq evil-want-keybinding nil)
   (setq evil-vsplit-window-right t)
   (setq evil-search-module 'evil-search)
+  (setq evil-shift-width tab-width)
   (evil-mode)
 
   :config
   (dolist (state-map (list evil-normal-state-map
-			   evil-visual-state-map))
+						   evil-visual-state-map
+						   evil-motion-state-map
+						   ))
     (define-key state-map (kbd "SPC") ctl-x-map))
 
   (define-key evil-insert-state-map (kbd "M-SPC") ctl-x-map)
@@ -119,6 +130,7 @@
     "SPC o" '(org-agenda :which-key "org-agenda")
     "SPC c" '(compile :which-key "compile")
     "SPC r" '(recompile :which-key "recompile")
+    "SPC w" '(whitespace-mode :which-key "whitespace-mode")
    )
   )
 
@@ -194,8 +206,16 @@
   :config
   (add-hook 'scheme-mode-hook #'lsp-scheme-guile))
 
+(use-package typst-ts-mode
+  :after lsp-mode
+  :hook (typst-ts-mode . lsp-mode)
+  :config
+  (add-to-list 'auto-mode-alist '("\\.typ\\'" . typst-ts-mode))
+  )
 
-(setq org-agenda-files '("~/Org/agenda.org"))
+(add-hook 'html-mode-hook #'emmet-mode)
+
+; (setq org-agenda-files '("~/Org/agenda.org"))
 
 
 (custom-set-variables
@@ -204,11 +224,72 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(company-fuzzy counsel evil-collection evil-tutor flx flycheck
-		   general lsp-scheme magit)))
+   '(company-fuzzy counsel emmet-mode evil-collection evil-tutor flx
+		   flycheck geiser-guile general lsp-scheme magit
+		   typst-ts-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:background "#1c1c1c" :foreground "#fafafa" :font "monospace"))))
+ '(cursor ((t (:background "#f6f740"))))
+ '(flycheck-fringe-error ((t (:foreground "#dc1e2e"))))
+ '(flycheck-fringe-info ((t (:foreground "#4f84ff"))))
+ '(flycheck-fringe-warning ((t (:foreground "#f6f740"))))
+ '(flycheck-warning ((t (:underline (:style wave :color "#fff07c")))))
+ '(font-lock-builtin-face ((t (:foreground "#4f84ff"))))
+ '(font-lock-comment-face ((t (:foreground "#00b594" :slant italic))))
+ '(font-lock-keyword-face ((t (:foreground "#f6f740" :weight bold))))
+ '(font-lock-string-face ((t (:foreground "#91e833"))))
+ '(font-lock-type-face ((t (:foreground "#61e786"))))
+ '(font-lock-variable-name-face ((t (:foreground "#a2d2ff" :weight normal))))
+ '(fringe ((t (:background "#282828"))))
+ '(line-number ((t (:background "#282828" :foreground "#00b594"))))
+ '(line-number-current-line ((t (:background "#f6f740" :foreground "#1c1c1c" :weight bold))))
+ '(mode-line ((t (:inherit line-number-current-line :background unspecified :box unspecified :foreground unspecified))))
+ '(mode-line-highlight ((t (:background "#4f84ff"))))
+ '(mode-line-inactive ((t (:box unspecified :background "#282828" :foreground "#00f5d4"))))
+ '(escape-glyph ((t (:foreground "#bc64f7"))))
+ '(region ((t (:background "#505050")))))
+; # The 16 terminal colors
+; 
+; # black
+; color0 #1c1c1c
+; color8 #282828
+; 
+; # red
+; color1 #dc1e2e
+; color9 #eb8258
+; 
+; # green
+; color2  #91e833
+; color10 #61e786
+; 
+; # yellow
+; color3  #f6f740
+; color11 #fff07c
+; 
+; # blue
+; color4  #4f84ff
+; color12 #a2d2ff
+; 
+; # magenta
+; color5  #bc64f7
+; color13 #e086d3
+; 
+; # cyan
+; color6  #00b594
+; color14 #00f5d4
+; 
+; # white
+; color7  #dedede
+; color15 #fafafa
+
+
+
+
+(add-to-list 'default-frame-alist `(font . "Deja Vu Sans Mono-12"))
+
+
+
