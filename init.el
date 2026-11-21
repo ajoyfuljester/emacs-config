@@ -112,6 +112,16 @@
 (setq backup-by-copying t)
 
 
+;;; Leader keys
+
+(define-prefix-command 'my/leader-map)
+(global-set-key (kbd "M-SPC") 'my/leader-map)
+
+;;;; Keys
+
+(define-key my/leader-map (kbd "w") #'whitespace-mode)
+
+
 ;;; Packages
 
 ;;;; Init
@@ -137,10 +147,36 @@
 (setq use-package-always-ensure t)
 
 
+
+
 ;;;; Package configurations
 
+;;;;; magit
+
 (use-package magit
-  :bind ("C-x g" . magit-status))
+  :config
+  (define-key my/leader-map (kbd "g") #'magit-status))
+
+
+;;;;; which-key
+
+(use-package which-key
+  :init (setq which-key-idle-delay 0.75)
+  :config (which-key-mode))
+
+
+;;;;; compile
+
+(use-package compile
+  :config
+  (define-key compilation-mode-map (kbd "C-c C-e") #'compile-goto-error)
+  (define-key compilation-mode-map (kbd "C-c C-c") #'compile)
+  (define-key compilation-mode-map (kbd "C-c C-r") #'recompile)
+  (define-key my/leader-map (kbd "o") #'org-agenda)
+  (define-key my/leader-map (kbd "c") #'compile)
+  (define-key my/leader-map (kbd "r") #'recompile)
+  )
+
 
 
 
