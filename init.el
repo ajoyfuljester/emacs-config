@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 
 (setq inhibit-startup-message t)
 
@@ -202,9 +203,6 @@
 
 
 
-(use-package lsp-scheme
-  :config
-  (add-hook 'scheme-mode-hook #'lsp-scheme-guile))
 
 (use-package typst-ts-mode
   :after lsp-mode
@@ -225,7 +223,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    '(company-fuzzy counsel emmet-mode evil-collection evil-tutor flx
-		   flycheck geiser-guile general lsp-scheme magit
+		   flycheck geiser-guile general magit
 		   typst-ts-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
