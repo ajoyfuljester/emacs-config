@@ -1,52 +1,120 @@
-;; -*- lexical-binding: t; -*-
+;;; init.el --- Personal Emacs configuration -*- lexical-binding: t; -*-
 
-(setq inhibit-startup-message t)
+;; Provided by ChatGPT
+;;; Basic settings
 
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
+(setq inhibit-startup-screen t)
+
+;;; Editing
+
+(setq-default indent-tabs-mode t)
+(setq-default tab-width 4)
+(setq tab-always-indent nil)
+
+(delete-selection-mode 1)
+(show-paren-mode 1)
+(column-number-mode 1)
+
+;;; Interface
+
 (menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
 
+(setq display-line-numbers-type 'relative)
+(global-display-line-numbers-mode 1)
 
-(load-theme 'tango-dark)
+(global-hl-line-mode t)
+(global-visual-line-mode t)
 
 (setq scroll-margin 12)
 (setq scroll-conservatively 144)
 
+;;;; Appearance
 
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+(add-to-list 'default-frame-alist `(font . "Deja Vu Sans Mono-12"))
+
+;;;;; Colors
+
+(defvar my/color0  "#1c1c1c") ; black
+(defvar my/color1  "#dc1e2e") ; red
+(defvar my/color2  "#91e833") ; green
+(defvar my/color3  "#f6f740") ; yellow
+(defvar my/color4  "#4f84ff") ; blue
+(defvar my/color5  "#bc64f7") ; magenta
+(defvar my/color6  "#00b594") ; cyan
+(defvar my/color7  "#dedede") ; white
+
+(defvar my/color8  "#282828") ; bright black
+(defvar my/color9  "#eb8258") ; bright red
+(defvar my/color10 "#61e786") ; bright green
+(defvar my/color11 "#fff07c") ; bright yellow
+(defvar my/color12 "#a2d2ff") ; bright blue
+(defvar my/color13 "#e086d3") ; bright magenta
+(defvar my/color14 "#00f5d4") ; bright cyan
+(defvar my/color15 "#fafafa") ; bright white
+
+(defvar my/selection "#505050") ; selection
+(defvar my/hl-line "#404040") ; selection
 
 
-(global-display-line-numbers-mode t)
-(global-visual-line-mode t)
-(global-hl-line-mode t)
-(set-face-attribute 'hl-line nil
-		    :inherit nil
-		    :foreground 'unspecified
-		    :background "#404040"
-		    )
+;;;;; Faces
 
-(setq display-line-numbers-type 'relative)
+(custom-set-faces
+ `(default ((t (:background ,my/color0
+                            :foreground ,my/color15
+                            :font "monospace"))))
+
+ `(cursor ((t (:background ,my/color3))))
+
+ `(flycheck-fringe-error ((t (:foreground ,my/color1))))
+ `(flycheck-fringe-info ((t (:foreground ,my/color4))))
+ `(flycheck-fringe-warning ((t (:foreground ,my/color3))))
+ `(flycheck-warning ((t (:underline (:style wave
+                                            :color ,my/color11)))))
+
+ `(font-lock-builtin-face ((t (:foreground ,my/color4))))
+ `(font-lock-comment-face ((t (:foreground ,my/color6
+                                           :slant italic))))
+ `(font-lock-keyword-face ((t (:foreground ,my/color3
+                                           :weight bold))))
+ `(font-lock-string-face ((t (:foreground ,my/color2))))
+ `(font-lock-type-face ((t (:foreground ,my/color10))))
+ `(font-lock-variable-name-face ((t (:foreground ,my/color12
+                                                 :weight normal))))
+
+ `(fringe ((t (:background ,my/color8))))
+
+ `(line-number ((t (:background ,my/color8
+                                :foreground ,my/color6))))
+ `(line-number-current-line ((t (:background ,my/color3
+                                             :foreground ,my/color0
+											 :weight bold))))
+
+ `(mode-line ((t (:inherit line-number-current-line
+                           :background unspecified
+                           :box unspecified
+                           :foreground unspecified))))
+ `(mode-line-highlight ((t (:background ,my/color4))))
+ `(mode-line-inactive ((t (:box unspecified
+                                 :background ,my/color8
+                                 :foreground ,my/color14))))
+
+ `(escape-glyph ((t (:foreground ,my/color5))))
+ `(region ((t (:background ,my/selection))))
+ `(hl-line ((t (:background ,my/hl-line))))
+ )
 
 
-(define-key global-map (kbd "C-y") nil)
-(define-key ctl-x-map (kbd "SPC") nil)
-
-
-
-
-
-    
-
-
-
-
-(setq-default tab-width 4)
-(setq tab-always-indent nil)
+;;; Backups
 
 (setq backup-directory-alist `(("." . "~/.cache/emacs/backup")))
 (setq backup-by-copying t)
 
 
+;;; Packages
+
+;;;; Init
 
 (require 'package)
 
@@ -56,238 +124,24 @@
 			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
 (package-initialize)
+
+
 (unless package-archive-contents
   (package-refresh-contents))
 
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 
-
-
-
-
-
 (require 'use-package)
+
 (setq use-package-always-ensure t)
 
-(use-package compile
-  :config
-  (define-key compilation-mode-map (kbd "C-c C-e") #'compile-goto-error)
-  (define-key compilation-mode-map (kbd "C-c C-c") #'compile)
-  (define-key compilation-mode-map (kbd "C-c C-r") #'recompile)
-  )
 
-(use-package ivy
-  :config
-  (ivy-mode))
-; (use-package counsel
-  ; :after ivy
-  ; :config
-  ; (counsel-mode))
+;;;; Package configurations
 
-(use-package which-key
-  :init
-  (setq which-key-idle-delay 0.3)
-  :config
-  (which-key-mode))
-
-(use-package evil
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-vsplit-window-right t)
-  (setq evil-search-module 'evil-search)
-  (setq evil-shift-width tab-width)
-  (evil-mode)
-
-  :config
-  (dolist (state-map (list evil-normal-state-map
-						   evil-visual-state-map
-						   evil-motion-state-map
-						   ))
-    (define-key state-map (kbd "SPC") ctl-x-map))
-
-  (define-key evil-insert-state-map (kbd "M-SPC") ctl-x-map)
-
-  (define-key evil-insert-state-map (kbd "C-y") nil)
-
-  (define-key evil-normal-state-map (kbd "-") #'dired-jump)
-
-
-  (add-hook 'dired-mode-hook #'evil-emacs-state)
-
-  )
-
-(use-package general
-  :config
-  (general-evil-setup)
-  (general-create-definer my/leader-keys
-    :states '(normal insert visual emacs)
-    :keymaps 'override
-    :prefix "SPC"
-    :global-prefix "M-SPC")
-
-  (my/leader-keys
-    "SPC o" '(org-agenda :which-key "org-agenda")
-    "SPC c" '(compile :which-key "compile")
-    "SPC r" '(recompile :which-key "recompile")
-    "SPC w" '(whitespace-mode :which-key "whitespace-mode")
-   )
-  )
-
-
-(use-package evil-collection
-  :after evil
-  :config
-  (setq evil-collection-mode-list '(dashboard dired ibuffer))
-  (evil-collection-init))
-
-(use-package evil-tutor)
-
-
-(use-package magit)
-
-(use-package lsp-mode
-  :commands lsp
-  :init
-  ;; keymap prefix for lsp-mode commands
-  (setq lsp-keymap-prefix "C-c l"))
-
-(use-package flycheck
-  :init
-  (global-flycheck-mode))
-
-(use-package company
-  :init
-  (global-company-mode)
-
-
-  :config
-  (setq company-minimum-prefix-length 1
-	company-idle-delay 0.4
-	company-selection-wrap-around t)
-
-  (defun my/company-complete-or-begin ()
-    (interactive)
-    (if (company--active-p)
-	(company-complete-selection)
-      (company-manual-begin)))
-
-  (add-hook 'evil-insert-state-exit-hook #'company-abort)
-
-  (define-key company-mode-map (kbd "C-y") #'my/company-complete-or-begin)
-
-
-  (define-key company-active-map (kbd "RET") nil)
-  (define-key company-active-map (kbd "<return>") nil)
-  (define-key company-active-map (kbd "<tab>") nil)
-  (define-key company-active-map (kbd "TAB") nil)
-  (define-key company-active-map (kbd "<backtab>") nil)
-  (define-key company-active-map (kbd "DEL") nil)
-
-  (define-key company-active-map (kbd "C-h") nil)
-  (define-key company-active-map (kbd "C-s") #'company-show-doc-buffer)
-  
-  )
-
-(use-package flx)
-
-(use-package company-fuzzy
-  :hook (company-mode . company-fuzzy-mode)
-  :init
-  (setq company-fuzzy-sorting-backend 'flx
-	company-fuzzy-reset-selection t
-        company-fuzzy-prefix-on-top nil
-        company-fuzzy-trigger-symbols '("." "->" "<" "\"" "'" "@")))
- 
+(use-package magit
+  :bind ("C-x g" . magit-status))
 
 
 
-
-(use-package typst-ts-mode
-  :after lsp-mode
-  :hook (typst-ts-mode . lsp-mode)
-  :config
-  (add-to-list 'auto-mode-alist '("\\.typ\\'" . typst-ts-mode))
-  )
-
-(add-hook 'html-mode-hook #'emmet-mode)
-
-; (setq org-agenda-files '("~/Org/agenda.org"))
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(company-fuzzy counsel emmet-mode evil-collection evil-tutor flx
-		   flycheck geiser-guile general magit
-		   typst-ts-mode)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:background "#1c1c1c" :foreground "#fafafa" :font "monospace"))))
- '(cursor ((t (:background "#f6f740"))))
- '(flycheck-fringe-error ((t (:foreground "#dc1e2e"))))
- '(flycheck-fringe-info ((t (:foreground "#4f84ff"))))
- '(flycheck-fringe-warning ((t (:foreground "#f6f740"))))
- '(flycheck-warning ((t (:underline (:style wave :color "#fff07c")))))
- '(font-lock-builtin-face ((t (:foreground "#4f84ff"))))
- '(font-lock-comment-face ((t (:foreground "#00b594" :slant italic))))
- '(font-lock-keyword-face ((t (:foreground "#f6f740" :weight bold))))
- '(font-lock-string-face ((t (:foreground "#91e833"))))
- '(font-lock-type-face ((t (:foreground "#61e786"))))
- '(font-lock-variable-name-face ((t (:foreground "#a2d2ff" :weight normal))))
- '(fringe ((t (:background "#282828"))))
- '(line-number ((t (:background "#282828" :foreground "#00b594"))))
- '(line-number-current-line ((t (:background "#f6f740" :foreground "#1c1c1c" :weight bold))))
- '(mode-line ((t (:inherit line-number-current-line :background unspecified :box unspecified :foreground unspecified))))
- '(mode-line-highlight ((t (:background "#4f84ff"))))
- '(mode-line-inactive ((t (:box unspecified :background "#282828" :foreground "#00f5d4"))))
- '(escape-glyph ((t (:foreground "#bc64f7"))))
- '(region ((t (:background "#505050")))))
-; # The 16 terminal colors
-; 
-; # black
-; color0 #1c1c1c
-; color8 #282828
-; 
-; # red
-; color1 #dc1e2e
-; color9 #eb8258
-; 
-; # green
-; color2  #91e833
-; color10 #61e786
-; 
-; # yellow
-; color3  #f6f740
-; color11 #fff07c
-; 
-; # blue
-; color4  #4f84ff
-; color12 #a2d2ff
-; 
-; # magenta
-; color5  #bc64f7
-; color13 #e086d3
-; 
-; # cyan
-; color6  #00b594
-; color14 #00f5d4
-; 
-; # white
-; color7  #dedede
-; color15 #fafafa
-
-
-
-
-(add-to-list 'default-frame-alist `(font . "Deja Vu Sans Mono-12"))
-
-
-
+;;; init.el ends here
