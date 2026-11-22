@@ -1,6 +1,13 @@
 ;;; init.el --- Personal Emacs configuration -*- lexical-binding: t; -*-
 
-;; Provided by ChatGPT
+;;; Commentary:
+
+;; This is a more organized version of my config.
+
+
+;;; Code:
+
+
 ;;; Basic settings
 
 (setq inhibit-startup-screen t)
@@ -21,6 +28,7 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 
+(require 'display-line-numbers)
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode 1)
 
@@ -112,14 +120,17 @@
 (setq backup-by-copying t)
 
 
-;;; Leader keys
+;;; Keyboard
 
-(define-prefix-command 'my/leader-map)
-(global-set-key (kbd "M-SPC") 'my/leader-map)
+(defvar my/leader-map
+  (make-sparse-keymap "My leader keymap"))
+(global-set-key (kbd "M-SPC") my/leader-map)
 
-;;;; Keys
+
+;;;; Keybindings
 
 (define-key my/leader-map (kbd "w") #'whitespace-mode)
+(define-key my/leader-map (kbd "o") #'org-agenda)
 
 
 ;;; Packages
@@ -167,16 +178,21 @@
 
 ;;;;; compile
 
+
 (use-package compile
   :config
-  (define-key compilation-mode-map (kbd "C-c C-e") #'compile-goto-error)
   (define-key compilation-mode-map (kbd "C-c C-c") #'compile)
   (define-key compilation-mode-map (kbd "C-c C-r") #'recompile)
-  (define-key my/leader-map (kbd "o") #'org-agenda)
   (define-key my/leader-map (kbd "c") #'compile)
   (define-key my/leader-map (kbd "r") #'recompile)
   )
 
+
+;;;;; flycheck
+
+(use-package flycheck
+  :init
+  (global-flycheck-mode 1))
 
 
 
