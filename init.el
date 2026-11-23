@@ -144,8 +144,8 @@
 			 ("elpa" . "https://elpa.gnu.org/packages/")
 			 ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
-(package-initialize)
 
+(package-initialize t)
 
 (unless package-archive-contents
   (package-refresh-contents))
@@ -164,6 +164,7 @@
 
 ;;;;; magit
 
+(package-activate 'magit)
 (use-package magit
   :config
   (define-key my/leader-map (kbd "g") #'magit-status))
@@ -190,8 +191,9 @@
 
 ;;;;; flycheck
 
+(package-activate 'flycheck)
 (use-package flycheck
-  :init
+  :config
   (global-flycheck-mode 1))
 
 
