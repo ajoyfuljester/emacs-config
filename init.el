@@ -197,5 +197,13 @@
   (global-flycheck-mode 1))
 
 
+;;;;; lsp-mode
+
+(package-activate 'lsp-mode)
+(use-package lsp-mode
+  :init
+  (setq lsp-keymap-prefix "M-SPC l"))
+
 
 ;;; init.el ends here
+
