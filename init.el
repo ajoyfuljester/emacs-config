@@ -13,6 +13,8 @@
 (setq inhibit-startup-screen t)
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
+(save-place-mode 1)
+
 ;;; Editing
 
 (setq-default indent-tabs-mode t)
